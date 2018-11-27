@@ -5,6 +5,14 @@
 
 class cache{
 public:
+    /*
+    *   Cache Constructor
+    * 
+    *   uint8_t Lin     -       Bytes per line
+    *   uint8_t Nin     -       Number of Sets
+    *   uint8_t Kin     -       Associativity
+    * 
+    */
     cache (uint8_t Lin, uint8_t Nin, uint8_t Kin){
         L = Lin;
         N = Nin;
@@ -44,6 +52,10 @@ public:
         }
     }
 
+    /*
+    *   Cache Destructor
+    * 
+    */
     ~cache (){
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < K; j++){
@@ -67,11 +79,23 @@ public:
         delete[] real_LRU;
     }
 
+    /*
+    *   Struct to encapsulate cache performance
+    * 
+    */
     struct hit_info{
         uint32_t misses;
         uint32_t hits;
     };
 
+    /*
+    *   Main operational function of cache, recieves a vector of memory requests and calculates what is stored within the cache
+    * 
+    *   std::vector <uint16_t> mem_req  -       Vector memory requests
+    * 
+    *   return struct hit_info          -       Structure which encapsulates information on number of hits and misses
+    * 
+    */
     struct hit_info memory_requests (std::vector <uint16_t> mem_req){
         struct hit_info info;
         info.misses = 0;
@@ -117,6 +141,13 @@ private:
     uint16_t** tag_vals;            // 2D Array to store tag values
     uint8_t*** real_LRU;            // N 2D Arrays to Calulate Real LRU
 
+    /*
+    *   Record use of line in the context of a given set
+    *   
+    *   int line        -       Line which has just been used
+    *   uint16_t set    -       Set context in which line was just used
+    * 
+    */
     void LRU_addition (int line, uint16_t set){
         for (int i = 0; i < K; i++){        // Set 1s in all values of row
             real_LRU[set][line][i] = 1;
@@ -126,6 +157,14 @@ private:
         }
     }
 
+    /*
+    *   Find the Least Recently Used line
+    * 
+    *   uint16_t set    -       Set context in which request was made
+    * 
+    *   return uint8_t  -       line number of least recently used row
+    * 
+    */
     uint8_t LRU(uint16_t set){
         bool temp = false;
         for (int i = 0; i < K; i++){
