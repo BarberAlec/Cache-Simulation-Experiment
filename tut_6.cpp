@@ -101,7 +101,9 @@ public:
                 // MISS!
                 info.misses++;
                 // Need To decide which Tag to replace
-                tag_vals[set][LRU(set)] = tag;
+                uint16_t line2replace =  LRU(set);
+                tag_vals[set][line2replace] = tag;
+                LRU_addition(line2replace,set);
             }
             hit = false;
         }
@@ -115,7 +117,7 @@ private:
     uint16_t** tag_vals;            // 2D Array to store tag values
     uint8_t*** real_LRU;            // N 2D Arrays to Calulate Real LRU
 
-    void LRU_addition (uint8_t line, uint16_t set){
+    void LRU_addition (int line, uint16_t set){
         for (int i = 0; i < K; i++){        // Set 1s in all values of row
             real_LRU[set][line][i] = 1;
         }
